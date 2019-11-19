@@ -6,7 +6,7 @@ This is a genetic algorthm built in R designed for hyper-parameter tuning for ne
 
 I've decided to open source it, as I don't think I can improve it further.
 
-It takes in a population and randomly initialized the hyper-parameters, then it tests all agents in the population and takes the top ranked agents.
+It takes in a population and randomly initializes the hyper-parameters, then it tests all agents in the population and takes the top ranked agents.
 
 Then it randomly couples 2 agents together as father and mother, and inherit hyper-parameters from the parents as traits for the next generation with a random chance of mutation.
 
