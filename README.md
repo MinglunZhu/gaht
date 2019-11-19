@@ -28,7 +28,7 @@ This does not encode DNAs or genes or whatnots, as I'm not famililiar with those
 ## Caveats
 Obviously, this is a very brute force way of testing hyper-parameters, because you train the neural network for the population size  for the number of generations, which can be very expensive. Especially considering that a large population is recommended.
 
-I like, however, the fact that nueral network mimics the human brain, and genetic algorithms mimic the evolution of brains.
+I like, however, the fact that neural network mimics the human brain, and genetic algorithms mimic the evolution of brains.
 
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
