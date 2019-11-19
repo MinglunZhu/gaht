@@ -13,3 +13,6 @@ Then it randomly couples 2 agents together as father and mother, and inherit hyp
 This process repeats and guides the hyper-parameter towards a direction that produces higher ranking agents.
 
 This does not encode DNAs or genes or whatnots, as I'm not famililiar with those things. So, feel free to correct me if I'm doing this wrong.
+
+## License
+[GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
