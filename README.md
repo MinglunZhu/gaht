@@ -15,6 +15,9 @@ This process repeats and guides the hyper-parameter towards a direction that pro
 This does not encode DNAs or genes or whatnots, as I'm not famililiar with those things. So, feel free to correct me if I'm doing this wrong.
 
 ## How to Use
+### Dependencies
+- dplyr
+
 ### Build Package
 
 ### Load Package
