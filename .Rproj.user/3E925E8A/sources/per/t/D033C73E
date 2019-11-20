@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1532025827967.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3687697245",
+    "id" : "D033C73E",
+    "lastKnownWriteTime" : 1536430477,
+    "last_content_update" : 1536430477629,
+    "path" : "D:/Work/Projects/rPkgEvlAlg/R/hello.R",
+    "project_path" : "R/hello.R",
+    "properties" : {
+        "cursorPosition" : "123,88",
+        "scrollLine" : "113"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

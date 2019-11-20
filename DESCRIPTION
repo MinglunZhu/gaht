@@ -1,0 +1,11 @@
+Package: rPkgEvlAlg
+Type: Package
+Title: Evolution Algorithm
+Version: 0.3.0
+Author: Jack Ma
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
