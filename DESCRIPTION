@@ -1,11 +1,10 @@
 Package: rPkgEvlAlg
 Type: Package
-Title: Evolution Algorithm
-Version: 0.3.0
-Author: Jack Ma
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Genetic Algorithm for Hyper-parameter Tuning
+Version: 0.3.1
+Author: Minglun Zhu
+Maintainer: Minglun Zhu <297154048@outlook.com>
+Description: This is a genetic algorthm designed for hyper-parameter tuning for neural networks.
+License: [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 Encoding: UTF-8
 LazyData: true
