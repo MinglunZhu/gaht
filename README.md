@@ -19,8 +19,10 @@ This does not encode DNAs or genes or whatnots, as I'm not famililiar with those
 - dplyr
 
 ### Build Package
+Open `rPkgEvlAlg.Rproj` in RStudio, and go to `Build` > `Clean and Rebuild`. This will build the package and make it available in your local computer. I'm not sure about other IDEs, but they should have something similar.
 
 ### Load Package
+
 
 ### Using the Functions
 
