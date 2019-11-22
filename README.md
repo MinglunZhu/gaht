@@ -27,8 +27,11 @@ After building the package, you need a new session to be able to load the packag
 library(rPkgEvlAlg)
 ```
 
-### Using the Functions
-
+### Using the Function
+To start the algorithm, call:
+```
+evolve(ftrs, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)  
+```
 
 ## Caveats
 Obviously, this is a very brute force way of testing hyper-parameters, because you train the neural network for the population size  for the number of generations, which can be very expensive. Especially considering that a large population is recommended.
