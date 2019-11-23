@@ -50,8 +50,8 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
   - when this is reached, the evolution stops and assumes that no improvements can be made
    
 - `pop` (list):
-  - you can pre-supply a population, if pop not supplied
-  - if will be randomly initialized
+  - you can pre-supply a population
+  - if pop not supplied, it will be randomly initialized
    
 - `popSize` (int):
   - if pop is not pre-supplied, popSize is needed to randomly inistialize a population
