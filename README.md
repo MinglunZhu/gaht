@@ -67,6 +67,34 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
   - The first in the list is the individual with the highest score.
   - The individual is a 1d vector with each item being a feature in the same order defined in `ftr_settings`.
 
+#### Example
+Example for the `ftr_settings` data frame:
+```
+settings <- data.frame(
+  name =           c('filter1',   'filter2', 'numLayers_dense', 'numUnits1', 'dropRate1', 'numUnits2',       'dropRate2',       'numUnits3',       'dropRate3'),
+  min =            c(300,         200,        3,                 200,        .8,           200,              .5,                200,               0),
+  max =            c(300,         200,        3,                 200,        .8,           200,              .5,                200,               1),
+  type =           c('integer',   'integer',  'integer',         'integer',  'numeric',   'integer',         'numeric',         'integer',         'numeric'),
+  dependency =     c(NA,          NA,         NA,                NA,         NA,          'numLayers_dense', 'numLayers_dense', 'numLayers_dense', 'numLayers_dense'),
+  dependency_min = c(NA,          NA,         NA,                NA,         NA,          2,                 2,                 3,                 3)
+)
+```
+  - `name`: name of the hyper-parameter
+  - `min`: minimum value for the hyper-parameter
+  - `max`: maximum value for the hyper-parameter
+  - `type`: data type, if is integer, the random mutation and initialization will round the number to integer
+  - `dependency`: if the hyper-parameter depends on another hyper-parameter
+      for example, if number of layers is 2, then the number of units and dropout rate in layer 3 will be set to 0
+      regardless of what the min value for layer 3 units and layer3 dropout are
+      so, layer 3 units and layer 3 dropout have a dependency on number of layers
+  - `dependency_min`: the mininum value required for the depended hyper-parameter
+  
+  To temporarily lock a hyper-parameter, set the min value and max value to the same value. This means that the locked hyper-parameter will not evolve by the algorithm.
+  
+  To permanantly lock a hyper-parameter, don't add that hyper-parameter into the `ftr_settings` data frame, and just hard code it into the test function.
+  
+  Unfortunately, if you have 50 layers, you will need to create settings for all 50 layers in the data frame. You could use a loop in that case, rather than manually. The reason for this is that so 50 layers hyper-parameters can evolve independent of each other. This also allows you to have 50 different settings for all 50 layers. Although, it very unlikely you will need 50 different settings. Most likely, you will have the same settings for most layers. Use a loop to create the settings data frame in that case.
+  
 ## Caveats
 Obviously, this is a very brute force way of testing hyper-parameters, because you train the neural network for the population size  for the number of generations, which can be very expensive. Especially considering that a large population is recommended.
 
