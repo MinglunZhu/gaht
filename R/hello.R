@@ -173,7 +173,12 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
     for (i in 1:popSize) {
       print(paste('generation', genCnt, 'test subject', i, sep = ' '))
 
-      print(pop[[i]])
+      print(
+        data.frame(
+          name = ftrs$name,
+          val = pop[[i]]
+        )
+      )
 
       gc()
 
@@ -187,7 +192,11 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 
     #not only the ftrs identical, but if the score doesn't get better
     #then it's also considered duplicate generation
-    if (identical(winner, lastBest) | (bestScore <= highestScore) | ((genCnt - dupTrack + dupGens) > maxGens)) {
+    if (
+      identical(winner, lastBest)
+      | (bestScore <= highestScore)
+      | ((maxGens > 0) & ((genCnt - dupTrack + dupGens) > maxGens))
+    ) {
       dupTrack <- dupTrack + 1
 
       highestScore <- pmax(highestScore, bestScore)
@@ -197,6 +206,8 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
       lastBest <- winner
 
       highestScore <- bestScore
+
+      dupGens <- pmax(genCnt, dupGens)
     }
   }
 
@@ -221,14 +232,21 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 #   if will be randomly initialized
 # popSize:
 #   if pop is not pre-supplied, popSize is needed to randomly inistialize a population
+#   obivously, a minimum of 2 is required per Christianity Adams and eve
+#   but science seems to suggest the min is much larger
+#   one school of thought is that it depends on how many hyper-parameters you are trying to evolve
+#   this makes sense as the more parameters you have the bigger the search space
+#   we recommend at least a 1:1 ratio between population size and number of params
+#   here we set the default to 50
 # maxGens:
 #   max generations the algorithm will try to evolve,
 #   after that all generations are considered duplicated generations
 #   and will evolve for specified duplicate generations allowed
+#   set to 0 to disable
 #
 #returns
 # the features list with the highest score
-evolve <- function(ftrs, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens) {
+evolve <- function(ftrs, test, dupGens = 4, pop = NULL, popSize = 50, maxGens) {
   dupTrack <- 0
   #init to false because used in boolean comparison later
   lastBest <- c()
