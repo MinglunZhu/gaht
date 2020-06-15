@@ -48,6 +48,8 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
 - `dupGens` (int):
   - number of generations which the best score hasn't improved
   - when this is reached, the evolution stops and assumes that no improvements can be made
+  - note that this number will increase automatically if the best score continues to improve for many generations
+  - so you only need to set a number sensible for the initial few generations
    
 - `pop` (list):
   - you can pre-supply a population
@@ -55,11 +57,13 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
    
 - `popSize` (int):
   - if pop is not pre-supplied, popSize is needed to randomly inistialize a population
+  - min 4 is required
    
 - `maxGens` (int):
   - max generations the algorithm will try to evolve,
   - after that all generations are considered duplicated generations
   - and will evolve for specified duplicate generations allowed
+  - set to 0 to disable
 
 #### returns
 - (list):
