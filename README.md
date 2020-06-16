@@ -102,9 +102,9 @@ settings <- data.frame(
 ### Log File
 A log file called 'evlAlg_log.csv' will be output in your project directory that uses this package, and it's updated every time an agent in the population is tested.
 
-It's a csv file that, when imported, forms a table or dataframe. Each row represents a test subject / agent. It tells you some information about the generation and helps you understand why the evolution hasn't stop, information about the test subject, as well as the test result.
+It's a csv file that, when imported, forms a table or dataframe. Each row represents a test subject / agent. It tells you some information about the generation and helps you understand why the evolution hasn't stopped, information about the test subject, as well as the test result.
 
-You can then analyze these test subjects and see if you can spot a definitive pattern / correlation between the test subjects and test results. If you can find a hyper-parameter that consistently generate good result, then you don't have to evolve that hyper-parameter anymore, or, at lease, narrow the evolvable range down significantly.
+You can then analyze these test subjects and see if you can spot a definitive pattern / correlation between the test subjects and test results. If you can find a hyper-parameter setting that consistently generates good result, then you don't have to evolve that hyper-parameter anymore, or, at lease, narrow the evolvable range down significantly.
 
 ## Caveats
 Obviously, this is a very brute force way of testing hyper-parameters, because you train the neural network for the population size  for the number of generations, which can be very expensive. Especially considering that a large population is recommended.
