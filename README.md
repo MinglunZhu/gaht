@@ -98,7 +98,14 @@ settings <- data.frame(
   To permanantly lock a hyper-parameter, don't add that hyper-parameter into the `ftr_settings` data frame, and just hard code it into the test function.
   
   Unfortunately, if you have 50 layers, you will need to create settings for all 50 layers in the data frame. You could use a loop in that case, rather than manually. The reason for this is that so 50 layers hyper-parameters can evolve independent of each other. This also allows you to have 50 different settings for all 50 layers. Although, it's very unlikely you will need 50 different settings. Most likely, you will have the same settings for most layers. Use a loop to create the settings data frame in that case.
-  
+
+### Log File
+A log file called 'evlAlg_log.csv' will be output in your project directory that uses this package, and it's updated every time an agent in the population is tested.
+
+It's a csv file that, when imported, forms a table or dataframe. Each row represents a test subject / agent. It tells you some information about the generation and helps you understand why the evolution hasn't stop, information about the test subject, as well as the test result.
+
+You can then analyze these test subjects and see if you can spot a definitive pattern / correlation between the test subjects and test results. If you can find a hyper-parameter that consistently generate good result, then you don't have to evolve that hyper-parameter anymore, or, at lease, narrow the evolvable range down significantly.
+
 ## Caveats
 Obviously, this is a very brute force way of testing hyper-parameters, because you train the neural network for the population size  for the number of generations, which can be very expensive. Especially considering that a large population is recommended.
 
