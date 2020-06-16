@@ -171,7 +171,20 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
     scores <- vector(length = popSize)
 
     for (i in 1:popSize) {
-      print(paste('generation', genCnt, 'test subject', i, sep = ' '))
+      print(paste(
+        'generation', genCnt, 'test subject', i,
+        sep = ' '
+      ))
+
+      print(paste(
+        'required dup gens', dupGens, 'crt dup gens', dupTrack,
+        sep = ' '
+      ))
+
+      print(paste(
+        'highest score', highestScore,
+        sep = ' '
+      ))
 
       print(
         data.frame(
