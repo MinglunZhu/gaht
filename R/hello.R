@@ -1,7 +1,8 @@
 library(dplyr)
 
 #consts
-
+#you should make sure popSize is at least 4 so that top 25% would at least be 1 individual
+ITN_TOP_PCTG <- .25
 #end consts
 
 itn_chkFtrType <- function(ftrs, ftrLst) {
@@ -52,6 +53,25 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
   winner <- c()
   popSize <- length(pop)
 
+  topCnt <- round(ITN_TOP_PCTG * popSize)
+  randCnt <- round(.05 * popSize)
+
+  #since the top 25% will always survive
+  #the true mutation population is only 75% at maximum
+  #mutation rate depend on life span
+  #for a short life span but rapidly reproducing organism
+  #they can afford to do lots of experimental mutations
+  #here we represent reproduction as 75% of population size
+  #and life span as number of features per test subject
+  #life span
+  mutateRate_ls <- 100 / (100 + ftrCnt)
+
+  reproSze <- (1 - ITN_TOP_PCTG) * popSize
+  #pop sze
+  mutateRate_ps <- reproSze / (reproSze + 50)
+
+  glbMutateRate <- mutateRate_ls * mutateRate_ps
+
   while (dupTrack < dupGens) {
     if (genCnt > 0) {
       #pick winners and some random loser, breed next gen, random mutate
@@ -62,10 +82,6 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 
       #then we pick top 25%, and random 5% from the remaining and breed for the next gen pop size - 1
       #each child is then randomly mutated
-      #you should make sure popSize is at least 4 so that top 25% would at least be 1 individual
-      topCnt <- round(.25 * popSize)
-      randCnt <- round(.05 * popSize)
-
       scoreIdx <- data.frame(
         score = scores
       ) %>%
@@ -106,7 +122,7 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
         childCnt <- pmin(sample(1:3, 1), nextGenSizeRemain)
 
         for (ci in 1:childCnt) {
-          #creat child and add to next gen
+          #create child and add to next gen
           #for each feature, randomly select from father or mother, then mutate for no more than 50% from the original figure
           #the mutate can either increase or decrease
           ni <- length(nextGen) + 1
@@ -126,7 +142,7 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
             nextGen[[ni]][fi] <- pmin(pmax(nextGen[[ni]][fi], ftrs$min[fi]), ftrs$max[fi])
 
             #mutate
-            #mutation chance is dependant on if the father trait is similar to mother trait
+            #mutation chance is dependent on if the father trait is similar to mother trait
             #this happens if inbreeding and father and mother share similar traits
             #mutation chance = similarity rate
             ttlFtrSze <- ftrs$max[fi] - ftrs$min[fi]
@@ -196,6 +212,27 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
       gc()
 
       scores[i] <- test(pop[[i]])
+
+      log_row_df <- data.frame(
+        val = c(genCnt, i, dupGens, dupTrack, highestScore, pop[[i]], scores[i])
+      )
+
+      row.names(log_row_df) <- c('genNbr', 'tsNbr', 'dupGenCnt_rqd', 'dupGenCnt_crt', 'highestScore', ftrs$name, 'score')
+
+      log_row_df <- t(log_row_df)
+
+      if (exists('log_df')) {
+        log_df <- rbind(log_df, log_row_df)
+      } else {
+        log_df <- log_row_df
+      }
+
+      #opt log file
+      write.csv(
+        log_df,
+        'evlAlg_log.csv',
+        row.names = FALSE
+      )
     }
 
     #compare best score with last best, if same, increase dup track, if not reset
