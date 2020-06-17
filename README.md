@@ -57,7 +57,8 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
    
 - `popSize` (int):
   - if pop is not pre-supplied, popSize is needed to randomly inistialize a population
-  - min 4 is required
+  - min 8 is required to select the top 2 agents to breed
+  - min 20 is required to select top agents but also 1 random non-top agent to breed
    
 - `maxGens` (int):
   - max generations the algorithm will try to evolve,
