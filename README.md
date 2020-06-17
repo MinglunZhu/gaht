@@ -54,9 +54,10 @@ evolve(ftr_settings, test, dupGens = 4, pop = NULL, popSize = NULL, maxGens)
 - `pop` (list):
   - you can pre-supply a population
   - if pop not supplied, it will be randomly initialized
+  - you can use this together with `maxGens` to force the algorithm to stop after certain generations, then save the population, and continue the algorithm by supplying the saved population.
    
 - `popSize` (int):
-  - if pop is not pre-supplied, popSize is needed to randomly inistialize a population
+  - if pop is not pre-supplied, `popSize` is needed to randomly inistialize a population
   - min 8 is required to select the top 2 agents to breed
   - min 20 is required to select top agents but also 1 random non-top agent to breed
    
