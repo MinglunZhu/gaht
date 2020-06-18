@@ -66,9 +66,9 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
   #life span
   mutateRate_ls <- 100 / (100 + ftrCnt)
 
-  reproSze <- (1 - ITN_TOP_PCTG) * popSize
+  reprodSze <- (1 - ITN_TOP_PCTG) * popSize
   #pop sze
-  mutateRate_ps <- reproSze / (reproSze + 50)
+  mutateRate_ps <- reprodSze / (reprodSze + 50)
 
   glbMutateRate <- mutateRate_ls * mutateRate_ps
 
@@ -78,7 +78,7 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
       nextGen <- list()
 
       #our number 1 winner automatically survives as immortal until his score gets beaten
-      nextGen[[1]] <- winner
+      #nextGen[[1]] <- winner
 
       #then we pick top 25%, and random 5% from the remaining and breed for the next gen pop size - 1
       #each child is then randomly mutated
@@ -88,7 +88,8 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
         mutate(idx = row_number())
 
       topIdx <- scoreIdx %>%
-        top_n(topCnt, score)
+        top_n(topCnt, score) %>%
+        arrange(desc(score))
 
       btmIdx <- scoreIdx %>%
         top_n(-(popSize - topCnt), score)
@@ -98,7 +99,13 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
       breedPool <- list()
 
       for (i in 1:topCnt) {
-        breedPool[[i]] <- pop[[topIdx$idx[i]]]
+        #top winners automatically survives into next generation
+        #this is for efficiency purposes in case the children from new generation was worse than
+        #the previous generation
+        idx <- topIdx$idx[i]
+
+        nextGen[[i]] <- pop[[idx]]
+        breedPool[[i]] <- pop[[idx]]
       }
 
       #if population ia too small, randCnt  could be 0
@@ -184,6 +191,8 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
     genCnt <- genCnt + 1
 
     #test each individual within the pop
+    #but only test the new test subjects
+    #not the ones survived from previous generation
     scores <- vector(length = popSize)
 
     for (i in 1:popSize) {
@@ -211,7 +220,11 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 
       gc()
 
-      scores[i] <- test(pop[[i]])
+      if ((genCnt == 1) | (i > topCnt)) {
+        scores[i] <- test(pop[[i]])
+      } else {
+        scores[i] <- topIdx$score[i]
+      }
 
       log_row_df <- data.frame(
         val = c(genCnt, i, dupGens, dupTrack, highestScore, pop[[i]], scores[i])
