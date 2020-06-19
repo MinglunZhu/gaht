@@ -61,12 +61,13 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
   #mutation rate depend on life span
   #for a short life span but rapidly reproducing organism
   #they can afford to do lots of experimental mutations
-  #here we represent reproduction as 75% of population size
+  #here we represent reproduction as population size
+  #and because 25% always survives, we use pop size / 75%
   #and life span as number of features per test subject
   #life span
   mutateRate_ls <- 100 / (100 + ftrCnt)
 
-  reprodSze <- (1 - ITN_TOP_PCTG) * popSize
+  reprodSze <- popSize / (1 - ITN_TOP_PCTG)
   #pop sze
   mutateRate_ps <- reprodSze / (reprodSze + 50)
 
@@ -160,7 +161,7 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
               simRate <- pmax(1 - abs(father[fi] - mother[fi]) / ttlFtrSze, 0)
             }
 
-            mutateProb <- simRate / 2
+            mutateProb <- simRate * glbMutateRate
 
             if (sample(1:0, 1, prob = c(mutateProb, 1 - mutateProb)) == 1) {
               #radomly choose between min and max
@@ -171,7 +172,9 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
               )
 
               #limit to 50% change from the original
-              maxChg <- .5 * ttlFtrSze
+              #60% allows mutation still be possible if rounding round up
+              #and removed the 50% mutation
+              maxChg <- .6 * ttlFtrSze
 
               nextGen[[ni]][fi] <- pmax(
                 pmin(mutated, nextGen[[ni]][fi] + maxChg),
@@ -208,6 +211,11 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 
       print(paste(
         'highest score', highestScore,
+        sep = ' '
+      ))
+
+      print(paste(
+        'global mutation rate', glbMutateRate,
         sep = ' '
       ))
 

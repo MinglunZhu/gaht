@@ -1,7 +1,7 @@
 Package: rPkgEvlAlg
 Type: Package
 Title: Genetic Algorithm for Hyper-parameter Tuning
-Version: 0.4.1
+Version: 0.5.3
 Author: Minglun Zhu
 Maintainer: Minglun Zhu <297154048@outlook.com>
 Description: This is a genetic algorthm designed for hyper-parameter tuning for neural networks.
