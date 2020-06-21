@@ -5,11 +5,10 @@ library(dplyr)
 ITN_TOP_PCTG <- .25
 #end consts
 
-itn_chkFtrType <- function(ftrs, ftrLst) {
-  #chk type
-  ftrs <- ifelse(ftrLst$type == 'integer', round(ftrs), ftrs)
-
-  #chk dependency
+#returns
+# if dependency is satisfied: TRUE
+# else:                       FALSE
+itn_chkDpdc <- function(ftrs, ftrLst) {
   dependencyVal <- sapply(ftrLst$dependency, function(dependency) {
     if (is.na(dependency)) {
       0
@@ -20,7 +19,12 @@ itn_chkFtrType <- function(ftrs, ftrLst) {
 
   dependencyMin <- ifelse(is.na(ftrLst$dependency_min), 0, ftrLst$dependency_min)
 
-  ifelse(dependencyVal < dependencyMin, 0, ftrs)
+  dependencyVal >= dependencyMin
+}
+
+itn_chkFtrType <- function(ftrs, ftrLst) {
+  #chk type
+  ftrs <- ifelse(ftrLst$type == 'integer', round(ftrs), ftrs)
 }
 
 #ftrs is dataframe
@@ -139,10 +143,24 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 
           for (fi in 1:ftrCnt) {
             #choose father or mother
-            if(sample(1:2, 1) == 1) {
-              nextGen[[ni]][fi] <- father[fi]
+            #if only father meets dependency, then inherit from father
+            #if only mother meets dependency, then inherit from mother
+            #else randomly choose 1
+            isMetDpdc_f <- itn_chkDpdc(father, ftrs)
+            isMetDpdc_m <- itn_chkDpdc(mother, ftrs)
+
+            if (xor(isMetDpdc_f, isMetDpdc_m)) {
+              if (isMetDpdc_f) {
+                nextGen[[ni]][fi] <- father[fi]
+              } else {
+                nextGen[[ni]][fi] <- mother[fi]
+              }
             } else {
-              nextGen[[ni]][fi] <- mother[fi]
+              if(sample(1:2, 1) == 1) {
+                nextGen[[ni]][fi] <- father[fi]
+              } else {
+                nextGen[[ni]][fi] <- mother[fi]
+              }
             }
 
             #limit to min max
@@ -150,36 +168,40 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
             nextGen[[ni]][fi] <- pmin(pmax(nextGen[[ni]][fi], ftrs$min[fi]), ftrs$max[fi])
 
             #mutate
-            #mutation chance is dependent on if the father trait is similar to mother trait
-            #this happens if inbreeding and father and mother share similar traits
-            #mutation chance = similarity rate
-            ttlFtrSze <- ftrs$max[fi] - ftrs$min[fi]
+            #stop mutation if dependency is not met
+            #because that mutation can never be tested
+            if (itn_chkDpdc(nextGen[[ni]], ftrs)) {
+              #mutation chance is dependent on if the father trait is similar to mother trait
+              #this happens if inbreeding and father and mother share similar traits
+              #mutation chance = similarity rate
+              ttlFtrSze <- ftrs$max[fi] - ftrs$min[fi]
 
-            if (ttlFtrSze == 0) {
-              simRate <- 1
-            } else {
-              simRate <- pmax(1 - abs(father[fi] - mother[fi]) / ttlFtrSze, 0)
-            }
+              if (ttlFtrSze == 0) {
+                simRate <- 1
+              } else {
+                simRate <- pmax(1 - abs(father[fi] - mother[fi]) / ttlFtrSze, 0)
+              }
 
-            mutateProb <- simRate * glbMutateRate
+              mutateProb <- simRate * glbMutateRate
 
-            if (sample(1:0, 1, prob = c(mutateProb, 1 - mutateProb)) == 1) {
-              #radomly choose between min and max
-              mutated <- runif(
-                1,
-                min = ftrs$min[fi],
-                max = ftrs$max[fi]
-              )
+              if (sample(1:0, 1, prob = c(mutateProb, 1 - mutateProb)) == 1) {
+                #radomly choose between min and max
+                mutated <- runif(
+                  1,
+                  min = ftrs$min[fi],
+                  max = ftrs$max[fi]
+                )
 
-              #limit to 50% change from the original
-              #60% allows mutation still be possible if rounding round up
-              #and removed the 50% mutation
-              maxChg <- .6 * ttlFtrSze
+                #limit to 50% change from the original
+                #60% allows mutation still be possible if rounding round up
+                #and removed the 50% mutation
+                maxChg <- .6 * ttlFtrSze
 
-              nextGen[[ni]][fi] <- pmax(
-                pmin(mutated, nextGen[[ni]][fi] + maxChg),
-                nextGen[[ni]][fi] - maxChg
-              )
+                nextGen[[ni]][fi] <- pmax(
+                  pmin(mutated, nextGen[[ni]][fi] + maxChg),
+                  nextGen[[ni]][fi] - maxChg
+                )
+              }
             }
           }
 
