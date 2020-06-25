@@ -24,7 +24,11 @@ itn_chkDpdc <- function(ftrs, ftrLst) {
 
 itn_chkFtrType <- function(ftrs, ftrLst) {
   #chk type
-  ftrs <- ifelse(ftrLst$type == 'integer', round(ftrs), ftrs)
+  ftrs <- case_when(
+    ftrLst$type == 'integer' ~ round(ftrs),
+    ftrLst$type == 'odd' ~ floor(ftrs / 2) * 2 + 1,
+    TRUE ~ ftrs
+  )
 }
 
 #ftrs is dataframe
