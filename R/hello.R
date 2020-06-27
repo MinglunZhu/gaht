@@ -153,8 +153,8 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
             isMetDpdc_f <- itn_chkDpdc(father, ftrs)
             isMetDpdc_m <- itn_chkDpdc(mother, ftrs)
 
-            if (xor(isMetDpdc_f, isMetDpdc_m)) {
-              if (isMetDpdc_f) {
+            if (xor(isMetDpdc_f[fi], isMetDpdc_m[fi])) {
+              if (isMetDpdc_f[fi]) {
                 nextGen[[ni]][fi] <- father[fi]
               } else {
                 nextGen[[ni]][fi] <- mother[fi]
@@ -174,7 +174,7 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
             #mutate
             #stop mutation if dependency is not met
             #because that mutation can never be tested
-            if (itn_chkDpdc(nextGen[[ni]], ftrs)) {
+            if (itn_chkDpdc(nextGen[[ni]], ftrs)[fi]) {
               #mutation chance is dependent on if the father trait is similar to mother trait
               #this happens if inbreeding and father and mother share similar traits
               #mutation chance = similarity rate
