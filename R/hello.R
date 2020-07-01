@@ -56,7 +56,7 @@ itn_initPop <- function(popSize, ftrs) {
   pop
 }
 
-itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, genCnt, maxGens) {
+itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, genCnt, maxGens, cd) {
   ftrCnt <- nrow(ftrs)
   winner <- c()
   popSize <- length(pop)
@@ -255,7 +255,24 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
       gc()
 
       if ((genCnt == 1) | (i > topCnt)) {
-        scores[i] <- test(pop[[i]])
+        #if an error is generated
+        #we assume the evolved setting is faulty
+        #this maybe that the model is too large or other reasons
+        #in that case, we just return a very small number so that
+        #the setting gets ignored by evolution
+        scores[i] <- tryCatch({
+          test(pop[[i]])
+        }, error = function(e) {
+          print('test failed, test subject assigned -Inf score')
+          print(e)
+
+          -Inf
+        })
+
+        #if test is run
+        #apply cooldown
+        #cooldown maybe 0
+        Sys.sleep(cd)
       } else {
         scores[i] <- topIdx$score[i]
       }
@@ -340,10 +357,13 @@ itn_evolve <- function(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, gen
 #   after that all generations are considered duplicated generations
 #   and will evolve for specified duplicate generations allowed
 #   set to 0 to disable
+# cd:
+#   a cool down period between each test subject in seconds
+#   default 0 means no cooldown
 #
 #returns
 # the features list with the highest score
-evolve <- function(ftrs, test, dupGens = 4, pop = NULL, popSize = 50, maxGens) {
+evolve <- function(ftrs, test, dupGens = 4, pop = NULL, popSize = 50, maxGens, cd = 0) {
   dupTrack <- 0
   #init to false because used in boolean comparison later
   lastBest <- c()
@@ -356,5 +376,5 @@ evolve <- function(ftrs, test, dupGens = 4, pop = NULL, popSize = 50, maxGens) {
     pop <- itn_initPop(popSize, ftrs)
   }
 
-  itn_evolve(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, genCnt, maxGens)
+  itn_evolve(pop, lastBest, highestScore, dupGens, dupTrack, ftrs, genCnt, maxGens, cd)
 }
